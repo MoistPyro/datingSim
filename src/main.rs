@@ -1,24 +1,7 @@
 mod characters;
-use crate::characters::characters::{Player, NPC};
-
-struct Compliment {
-    ego: i8,
-    muscle: i8,
-    smarts: i8,
-    text: String,
-}
-
-impl Compliment {
-    pub fn give(&mut self, giver: &Player, target: &NPC) -> i8 {
-        println!("You tell {}: {}", target.name, self.text);
-
-        let ego = giver.ego + self.ego - target.ego;
-        let muscle = giver.muscle + self.muscle - target.muscle;
-        let smarts = giver.smarts + self.smarts - target.smarts;
-
-        15 - ego.abs() - muscle.abs() - smarts.abs()
-    }
-}
+use crate::characters::{Player, NPC};
+mod interactions;
+use interactions::*;
 
 fn main() {
     let mut marianne = NPC::new("Marianne");
@@ -27,23 +10,31 @@ fn main() {
 
     let player = Player::new();
 
-    let mut compliment1 = Compliment {
-        ego: 5,
-        muscle: 0,
-        smarts: 0,
+    let mut interaction1 = Impress {
+        ego_boost: 1,
+        flex: 0,
+        smarts_multiplier: 2,
         text: "I'm better than you".to_string()
     };
 
-    let mut compliment2 = Compliment {
-        ego: 0,
-        muscle: 2,
-        smarts: 0,
+    let mut interaction2 = Impress {
+        ego_boost: 0,
+        flex: 2,
+        smarts_multiplier: 1,
         text: "Let's fight.".to_string()
     };
 
-    let answer1: String = marianne.answer(compliment1.give(&player, &marianne));
+    let answer1: String = marianne.react_to_score(interaction1.give(&player, &marianne));
     println!("{answer1}");
 
-    let answer2: String = marianne.answer(compliment2.give(&player, &marianne));
+    let answer2: String = marianne.react_to_score(interaction2.give(&player, &marianne));
     println!("{answer2}");
+
+    let mut interaction3 = Request {
+        relation_threshold: 10,
+        text: "Kiss me tenderly".to_string()
+    };
+
+    let answer3: String = marianne.react_to_score(interaction3.give(&player, &marianne));
+    println!("{answer3}");
 }
